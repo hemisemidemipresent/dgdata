@@ -21,5 +21,8 @@
   "homepage": "https://github.com/hemisemidemipresent/dgdata#readme",
   "dependencies": {
     "text-encoding": "^0.7.0"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.6.6"
   }
 }
