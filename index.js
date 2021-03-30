@@ -3,8 +3,8 @@ let textEncoding = require('text-encoding');
 module.exports = {
     /**
      * Converts an array of bytes to text
-     * @param {array} An array of utf-8 bytes
-     * @returns {string} A string
+     * @param {array} - An array of utf-8 bytes
+     * @returns {string} - A string
      */
     arrayToStr: function (array) {
         let rr = new Uint8Array(array);
@@ -14,8 +14,8 @@ module.exports = {
 
     /**
      * Converts a string to a utf-8 array
-     * @param {str} A string
-     * @returns {Array} Returns an array of numbers
+     * @param {str} - A string
+     * @returns {Array} - Returns an array of numbers
      */
     strToArray: function (str) {
         var result = [];
@@ -29,8 +29,8 @@ module.exports = {
     /**
      * Decodes a string or array of DGData
      * Arrays work best, as strings loose data due to utf-8 / unicode
-     * @param {data} This is the data to be decoded
-     * @returns {string} This is the result of the data
+     * @param {data} - This is the data to be decoded
+     * @returns {string} - This is the result of the data
      */
     decode: function (data) {
         if (typeof data == 'string') data = module.exports.strToArray(data);
@@ -44,8 +44,8 @@ module.exports = {
 
     /**
      * Encodes a string of data
-     * @param {data} Data to be encoded
-     * @returns {array} An array of bytes
+     * @param {data} - Data to be encoded
+     * @returns {array} - An array of bytes
      */
     encode: function (data) {
         var loc3 = 0;
@@ -64,40 +64,11 @@ module.exports = {
 
         return loc2;
     },
-    /**
-     * Get the daily challenge given the number
-     * @param {number} daily challenge number
-     * @returns {Promise} daily challenge object
-     */
-    getDaily: function (number) {
-        let promise = new Promise((resolve, reject) => {
-            let url =
-                'https://static-api.nkstatic.com/appdocs/11/dailyChallenges/' +
-                number;
-            // this website is in bytes, but because you are viewing it in a browser you see weird text. That is what { encoding : null } is for
-            request(url, { encoding: null }, (err, res, body) => {
-                if (err) {
-                    reject('req');
-                }
 
-                let g = dgdata.decode(body).toString('utf-8');
-                let json = JSON.parse(g);
-
-                resolve(json);
-            });
-        });
-        return promise;
-    },
-    /**
-     * Gets an odyssey given the date
-     * @param {string} dateStr
-     * @returns {Promise} odyssey object
-     */
-    getOdy: function (dateStr) {},
     /**
      * Encodes a number - You really shouldn't have to deal with this
-     * @param {number} The number to be encoded
-     * @returns {number} The result
+     * @param {number} - The number to be encoded.
+     * @returns {number} - The result.
      */
     secondHash: function (number) {
         var loc2 = new Uint32Array(1);
@@ -114,10 +85,9 @@ module.exports = {
     },
 
     /**
-     * Hashes some data - You really shouldn't have to deal with this
-     * unless you want to manually verify the program
-     * @param {data} Some data - it's a string
-     * @returns {array} An array of bytes
+     * Hashes some data - You really shouldn't have to deal with this unless you want to manually verify the program.
+     * @param {data} - Some data - it's a string.
+     * @returns {array} - An array of bytes.
      */
     hash: function (data) {
         var loc6 = 0;
@@ -139,5 +109,33 @@ module.exports = {
             loc4 = '0' + loc4;
         }
         return loc4;
+    },
+    /*
+        EXAMPLES
+        we will be using btd6 API just as an example
+    */
+    /**
+     * Get the daily challenge given the number
+     * @param {number} - daily challenge number
+     * @returns {Promise} - daily challenge object
+     */
+    getDaily: function (number) {
+        let promise = new Promise((resolve, reject) => {
+            let url =
+                'https://static-api.nkstatic.com/appdocs/11/dailyChallenges/' +
+                number;
+            // this website is in bytes, but because you are viewing it in a browser you see weird text. That is what { encoding : null } is for
+            request(url, { encoding: null }, (err, res, body) => {
+                if (err) {
+                    reject('req');
+                }
+
+                let g = dgdata.decode(body).toString('utf-8');
+                let json = JSON.parse(g);
+
+                resolve(json);
+            });
+        });
+        return promise;
     },
 };
