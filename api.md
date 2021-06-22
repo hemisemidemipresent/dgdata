@@ -60,13 +60,67 @@ request(url, { encoding: null }, (err, res, body) => {
 });
 ```
 
-### history*
-
-there is a non-github repo by the name of... `dgdata` (this package name is called `node-dgdata`). Currently all it does is rickrolls you, but one iteration ago it actually contained code that decrypted the dgdata. The code can be found [here](). This is simply a more extensive presentation of that code
-
-there is also the same code, but in a repl.it project that can be found [here](https://replit.com/@oorzkws/CarefreeUnwrittenSubversion#index.js)
-
-It is unknown whether these are really smart people with c# decompilers that decompiled NK's dgdata decoder called `TheStephenCypher`
+### real code
+```java
+public static string Decrypt(byte[] bytes, bool checkCrc = true)
+{
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                int num = i - 14;
+                if (num >= 0)
+                {
+                    bytes[i] = (byte)((int)(bytes[i] - 21) - num % 6);
+                }
+            }
+            string @string = Encoding.UTF8.GetString(bytes);
+            string header = @string.Substring(0, 14);
+            string text = @string.Substring(14);
+            if (checkCrc)
+            {
+                TheRealStephenCypher.check(header, text);
+            }
+            return text;
+        }
+        private static string getHexCrc(byte[] bytes)
+        {
+            uint num = 0u;
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                int num2 = (int)((byte)((uint)bytes[i] ^ num));
+                for (int j = 0; j < 8; j++)
+                {
+                    num2 = (num2 >> 1 ^ (num2 & 1) * -306674912);
+                }
+                num = (num >> 8 ^ (uint)num2);
+            }
+            return num.ToString("X").ToLower().PadLeft(8, '0');
+        }
+        private static void check(string header, string content)
+        {
+            if (!header.StartsWith("DGDATA"))
+            {
+                throw new ApplicationException("invalid input - header is not \"DGDATA\"");
+            }
+            string text = header.Substring(6);
+            string hexCrc = TheRealStephenCypher.getHexCrc(Encoding.UTF8.GetBytes(content));
+            if (!text.Equals(hexCrc))
+            {
+                throw new ApplicationException("bad CRC - expected " + hexCrc + ", claimed: " + text);
+            }
+        }
+        public static byte[] Encrypt(byte[] plaintext)
+        {
+            byte[] array = new byte[14 + plaintext.Length];
+            string s = "DGDATA" + TheRealStephenCypher.getHexCrc(plaintext);
+            byte[] bytes = Encoding.UTF8.GetBytes(s);
+            Array.Copy(bytes, array, bytes.Length);
+            for (int i = 0; i < plaintext.Length; i++)
+            {
+                array[i + 14] = (byte)((int)(plaintext[i] + 21) + i % 6);
+            }
+            return array;
+        }
+```
 # Races
 
 ## race leaderboard
