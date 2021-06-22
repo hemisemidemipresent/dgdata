@@ -20,4 +20,6 @@ request(url, { encoding: null }, (err, res, body) => {
 ```
 
 [Github](https://github.com/hemisemidemipresent/dgdata) 
+
 [npm](https://www.npmjs.com/package/node-dgdata)
+
